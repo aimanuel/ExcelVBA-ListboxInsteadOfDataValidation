@@ -1,0 +1,122 @@
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'CODING LISTBOX VERSI 2 (ADA FITUR SEARCH), BAGIAN LISTBOX DI USERFORMNYA
+'notes : di listbox properties RowSource tidak perlu diisi, karena akan di define dari coding
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+'* CODING UNTUK ENTRY/COPY DATA BY DOUBLE CLICK
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub ListBoxFieldTime_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+
+Dim i As Integer
+
+On Error GoTo ErrorHandler
+
+If Not Intersect(ActiveCell, Sheets("Project 1").Range("D7:D17")) Is Nothing Then
+
+    For i = 0 To ListBoxFieldTime.ListCount
+        If ListBoxFieldTime.Selected(i) Then
+            Selection = ListBoxFieldTime.Value
+            ActiveCell.Offset(1).Select
+            Exit Sub
+        End If
+    Next i
+
+End If
+
+ErrorHandler:
+    'empty = do nothing
+
+End Sub
+
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'* CODING UNTUK FITUR SEARCH (BY KEYDOWN F7)
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub ListBoxFieldTime_KeyDown(ByVal KeyCode As MSForms.ReturnInteger, ByVal Shift As Integer)
+
+Dim searchvalue As Variant
+
+'------------------------------------------------------------------------------------------------------------------------------------
+'source to write rowsource : http://stackoverflow.com/questions/30932787/userform-listbox-rowsource-not-populating
+'if press F7, will popup input box
+'------------------------------------------------------------------------------------------------------------------------------------
+
+'vbKeyF7 adalah untuk menandakan ketika user memencet F7
+'------------------------------------------------------------------------------------------------------------------------------------
+If KeyCode = vbKeyF7 Then
+
+	'panggil inputboxnya
+	'--------------------------------------------------------------------------------------------------------------------------------
+    searchvalue = InputBox("type your search", "search")
+	
+	'name range tsb yang ada di excelnya, akan = searchvalue dari inputbox
+	'--------------------------------------------------------------------------------------------------------------------------------
+    Range("FieldTimeSearch").Value = searchvalue
+	
+	'tampilkan data yang sudah ada result searchnya
+	'--------------------------------------------------------------------------------------------------------------------------------
+    ListBoxFieldTime.RowSource = "FieldTimeSearchRslt"
+    
+	'jika search value = kosong maka tidak perlu menampilkan search result, tapi kembali ke data asalnya
+	'--------------------------------------------------------------------------------------------------------------------------------
+    If searchvalue = vbNullString Then
+        Range("FieldTimeSearch") = ""
+        ListBoxFieldTime.RowSource = "FieldTime"
+    End If
+End If
+
+'if press F8, will remove Range Fieldtimesearch content & display default again
+'digunakan untuk kembali ke database semula
+'--------------------------------------------------------------------------------------------------------------------------------
+If KeyCode = vbKeyF8 Then
+    Range("FieldTimeSearch") = ""
+    ListBoxFieldTime.RowSource = "FieldTime"
+End If
+
+
+End Sub
+
+
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'* CODING UNTUK ENTRY/COPY BY PRESSING ENTER
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub ListBoxFieldTime_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
+
+Dim i As Integer
+
+On Error GoTo ErrorHandler
+
+If Not Intersect(ActiveCell, Sheets("Project 1").Range("D7:D17")) Is Nothing Then
+
+    If KeyAscii = 13 Then
+
+        For i = 0 To ListBoxFieldTime.ListCount
+            If ListBoxFieldTime.Selected(i) Then
+                Selection = ListBoxFieldTime.Value
+                ActiveCell.Offset(1).Select
+                Exit Sub
+            End If
+        Next i
+    End If
+    
+End If
+
+ErrorHandler:
+    'empty = do nothing
+
+
+End Sub
+
+
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'* CODING INI DIBUTUHKAN UNTUK BY DEFAULT KETIKA USERFORM DI MUNCULKAN, ROWSOURCE MENAMPILKAN DATA ASALNYA
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub UserForm_Initialize()
+
+ListBoxFieldTime.RowSource = "FieldTime"
+
+End Sub

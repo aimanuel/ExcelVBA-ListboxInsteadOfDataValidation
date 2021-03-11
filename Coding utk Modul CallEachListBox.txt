@@ -1,0 +1,69 @@
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'MODUL CALL EACHLISTBOX DIGUNAKAN UNTUK MEMANGGIL LISTBOX YANG TELAH DITENTUKAN, JIKA TERDAPAT > 1 LISTBOX DALAM 1 FILE EXCEL
+'- modul ini dapat memanggil listbox yg dimaksud secara dinamis, tergantu di area mana user memanggilnya
+'- tidak hanya listbox, listview pun bisa
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+'CODING INI DITARUH DI THISWORKBOOK, ini berfungsi sebagai penghubung modul calleachlistbox
+'application.onkey adalah untuk ketika user menekan F6, onkey tidak bisa digunakan untuk F1 & F2, sehingga ketika membuat onkey,
+'sebaiknya menggunakan antara F5-F8
+'------------------------------------------------------------------------------------------------------------------------------------
+Private Sub Workbook_Activate()
+
+    Application.OnKey "{F6}", "CallEachListView"
+
+End Sub
+
+
+'CODING INI DITARUH DI MODULE, ini berfungsi sebagai penghubung tiap listbox yang telah dibuat
+'------------------------------------------------------------------------------------------------------------------------------------
+Sub CallEachListBox()
+
+On Error GoTo ErrorHandler
+
+
+'if not intersect... digunakan untuk memastikan bahwa cell yang diselect berada dalam sheet Project1 range B7:B17, maka akan memunculkan
+'listbox FormProjectDesc, jika tidak maka tidak terjadi apa-apa
+'--------------------------------------------------------------------------------------------------------------------------------------------
+    If Not Intersect(ActiveCell, Sheets("Project 1").Range("B7:B17")) Is Nothing Then
+    
+		'call unloadAll dimaksudkan untuk menutup semua listbox yang aktif, lalu menampilkan listbox yg dimaksud,sehingga
+		'listbox yang muncul selalu 1 macam saja
+		'------------------------------------------------------------------------------------------------------------------------------------
+        Call UnloadAll
+        FormProjectDesc.Show vbModeless
+        
+    End If
+    
+    If Not Intersect(ActiveCell, Sheets("Project 1").Range("D7:D17")) Is Nothing Then
+    
+        Call UnloadAll
+        FormFieldTime.Show vbModeless
+    
+    End If
+    
+    If Not Intersect(ActiveCell, Sheets("Project 1").Range("B19:B28")) Is Nothing Then
+    
+        Call UnloadAll
+        FormOfficeTime.Show vbModeless
+    
+    End If
+    
+    
+ErrorHandler:
+    'empty = do nothing
+
+End Sub
+
+'--------------------------------------------------------------------------------------------------------------------------------------------
+'UnloadAll adalah modul untuk menutup semua listbox yang aktif saat ini
+'--------------------------------------------------------------------------------------------------------------------------------------------
+
+Sub UnloadAll()
+    Dim objLoop As Object
+     
+    For Each objLoop In VBA.UserForms
+        If TypeOf objLoop Is UserForm Then Unload objLoop
+    Next objLoop
+    
+End Sub

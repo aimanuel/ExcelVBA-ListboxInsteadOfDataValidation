@@ -1,0 +1,81 @@
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'LISTBOX UNTUK KEPERLUAN MENAMPILKAN LIST DATABASE & BISA DIPILIH UNTUK ENTRY DATA (ADMINISTRASI)
+'- digunakan karena tidak perlu utk meng-instal microsoft windows common control 6.0 (SP6), lain dengan listview yang membutuhkan
+'- bisa vb-modeless, klik di excel & form scr bergantian (simultaneously) itu bisa
+'- bisa untuk memunculkan banyak kolom, tapi harus disetting kolom mana yang akan dicopy datanya, sdgkan kolom yg lainnya bisa pakai
+'  vlookup, sehingga coding tidak terlalu rumit
+'- bisa diaplikasikan search, ketika list terlalu banyak, dan user lupa/malas untuk mencari listnya, tetapi tahu keywordnya
+'- row data yang ditampilkan bisa dibuat dinamis, mengikuti banyak/tidaknya datanya, dengan menggunakan table & namerange
+'- bisa diimplementasikan untuk lebih dari 1 listbox, membutuhkan modul tambahan yang bisa secara otomatis memanggil listbox yang
+'  dimaksud secara dinamis (modul CallEachListBox)
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'CODING LISTBOX VERSI 1 (TIDAK ADA FITUR SEARCH), BAGIAN LISTBOX DI USERFORMNYA
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+'* CODING UNTUK ENTRY/COPY DATA BY DOUBLE CLICK
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub ListBoxOfficeTime_DblClick(ByVal Cancel As MSForms.ReturnBoolean)
+
+Dim i As Integer
+
+On Error GoTo ErrorHandler
+
+'if not intersect... digunakan untuk memastikan bahwa cell yang diselect berada dalam range B19:28, jika diluar tsb maka data tidak
+'akan dicopy, atau tidak terjadi apa-apa
+'-------------------------------------------------------------------------------------------------------------------------------------
+If Not Intersect(ActiveCell, Sheets("Project 1").Range("B19:B28")) Is Nothing Then
+
+	'jika listbox sudah terselect, maka akan dicopy ke cell yang dimaksud
+	'---------------------------------------------------------------------------------------------------------------------------------
+    For i = 0 To ListBoxOfficeTime.ListCount
+        If ListBoxOfficeTime.Selected(i) Then
+            Selection = ListBoxOfficeTime.Value
+            ActiveCell.Offset(1).Select
+            Exit Sub
+        End If
+    Next i
+
+End If
+
+ErrorHandler:
+    'empty = do nothing
+
+End Sub
+
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+'* CODING UNTUK ENTRY/COPY DATA BY PRESSING ENTER
+'++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Private Sub ListBoxOfficeTime_KeyPress(ByVal KeyAscii As MSForms.ReturnInteger)
+
+Dim i As Integer
+
+On Error GoTo ErrorHandler
+
+'if not intersect... digunakan untuk memastikan bahwa cell yang diselect berada dalam range B19:28, jika diluar tsb maka data tidak
+'akan dicopy, atau tidak terjadi apa-apa
+'-------------------------------------------------------------------------------------------------------------------------------------
+If Not Intersect(ActiveCell, Sheets("Project 1").Range("B19:B28")) Is Nothing Then
+	
+	'keyAscii 13 adalah code untuk tombol enter
+	'---------------------------------------------------------------------------------------------------------------------------------
+    If KeyAscii = 13 Then
+
+		'jika listbox sudah terselect, maka akan dicopy ke cell yang dimaksud
+		'---------------------------------------------------------------------------------------------------------------------------------		
+        For i = 0 To ListBoxOfficeTime.ListCount
+            If ListBoxOfficeTime.Selected(i) Then
+                Selection = ListBoxOfficeTime.Value
+                ActiveCell.Offset(1).Select
+                Exit Sub
+            End If
+        Next i
+    End If
+    
+End If
+
+ErrorHandler:
+    'empty = do nothing
+
+End Sub
